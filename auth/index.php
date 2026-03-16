@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         require_once "../lib/conn.php";
 
         $sql = "SELECT id, password FROM utenti WHERE email = :email LIMIT 1";
-        $stmt = $conn->prepare($sql);
+        $stmt = $pdo->prepare($sql);
         $stmt->execute(["email" => $formEmail]);
 
         if ($stmt->rowCount() === 1) {
