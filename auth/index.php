@@ -11,30 +11,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         require_once "../lib/conn.php";
 
         $sql = "SELECT id, password FROM utenti WHERE email = :email LIMIT 1";
-
         $stmt = $conn->prepare($sql);
-
-        $stmt->execute([
-            "email" => $formEmail
-        ]);
+        $stmt->execute(["email" => $formEmail]);
 
         if ($stmt->rowCount() === 1) {
-
             $utente = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (password_verify($formPassword, $utente["password"])) {
-
                 $_SESSION["utente"] = $utente["id"];
-
-                header("Location: ../home/");
+                header("Location: ../dash.php");
                 exit;
-
             } else {
-                echo "Password errata";
+                header("Location: ../login/?error=password");
+                exit;
             }
-
         } else {
-            echo "Utente non trovato";
+            header("Location: ../login/?error=utente");
+            exit;
         }
     }
 }
