@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $utente = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!(password_verify($formPassword, $utente["password"]))) {
-                $_SESSION["utente"] = $utente["id"];
+                $_SESSION["utente"] = $utente["id_utente"];
                 header("Location: ../dash.php");
                 exit;
             } else {

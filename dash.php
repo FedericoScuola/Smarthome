@@ -7,7 +7,7 @@ require_once("lib/conn.php");
 // ══════════════════════════════════════
 session_start();
 
-$id_utente_corrente = $_SESSION['id_utente'];
+$id_utente_corrente = $_SESSION['utente'];
 
 // Query: dati utente corrente (nome, cognome, immagine_profilo, ruolo)
 $stmt = $pdo->prepare("
