@@ -229,6 +229,32 @@ function iniziali(string $nome, string $cognome): string {
     </a>
     <?php endif; ?>
 
+    <div class="nav__section-label">Sistema</div>
+
+    <?php if ($isOwner): ?>
+    <a href="../utenti/index.php" class="nav__item" title="Utenti">
+      <span class="nav__icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+          <path d="M16 3.13a4 4 0 010 7.75"/>
+        </svg>
+      </span>
+      <span class="nav__label">Utenti</span>
+    </a>
+    <a href="../utenti/crea.php" class="nav__item" title="Crea utente">
+      <span class="nav__icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="16"/>
+          <line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+      </span>
+      <span class="nav__label">Crea utente</span>
+    </a>
+    <?php endif; ?>
+
     <div class="nav__section-label">Alert</div>
 
     <div class="nav__item" data-page="notifiche" title="Notifiche">
