@@ -1,15 +1,14 @@
 <?php
 $servername = "127.0.0.1";
-$username = "root";
-$password = "mysql";
-$dbname = "smarthome";
+$username   = "root";
+$password   = "mysql";
+$dbname     = "smarthome";
 
 try {
-  $pdo = new PDO("mysql:host=$servername; dbname=$dbname", $username, $password);
-  // set the PDO error mode to exception
-  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-  
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8mb4", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 } catch(PDOException $e) {
-  echo "Connection failed: " . $e->getMessage();
+    die("Connessione fallita: " . $e->getMessage());
 }
 ?>

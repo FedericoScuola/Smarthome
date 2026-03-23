@@ -1,14 +1,9 @@
 <?php
-
 session_start();
-if (!empty($_SESSION['user_id'])) { header('Location: dash.php'); exit; }
-
-$errori = [
-    'password' => 'Password errata. Riprova.',
-    'utente'   => 'Nessun account trovato con questa email.',
-    'vuoto'    => 'Compila tutti i campi.',
-];
-$errore = $errori[$_GET['err'] ?? ''] ?? '';
+if (isset($_SESSION['utente'])) {
+    header("Location: ../home/index.php");
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="it">
@@ -16,9 +11,10 @@ $errore = $errori[$_GET['err'] ?? ''] ?? '';
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SmartHome — Accedi</title>
-  <link rel="stylesheet" href="styles/login.css">
+  <link rel="stylesheet" href="../styles/login.css">
 </head>
 <body>
+
 <div class="bg-glow bg-glow--tl"></div>
 <div class="bg-glow bg-glow--br"></div>
 
@@ -33,21 +29,34 @@ $errore = $errori[$_GET['err'] ?? ''] ?? '';
       </div>
       <div class="login-brand__text">
         <h1>Smart<span>Home</span></h1>
-        <p>Pannello di controllo · v3.0</p>
+        <p>Pannello di controllo</p>
       </div>
     </div>
 
-    <form class="login-form" method="POST" action="auth/login.php">
+    <?php if (isset($_GET['error'])): ?>
+    <div class="form-error visible">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <span>Email o password non validi.</span>
+    </div>
+    <?php endif; ?>
+
+    <form class="login-form" method="POST" action="auth.php">
+
       <div class="form-group">
         <label class="form-label" for="email">Email</label>
         <input class="form-input" type="email" id="email" name="email"
-               placeholder="nome@example.com" autocomplete="email" required>
+               placeholder="nome@example.com" required autocomplete="email">
       </div>
+
       <div class="form-group">
         <label class="form-label" for="password">Password</label>
         <div class="form-input-wrap">
           <input class="form-input" type="password" id="password" name="password"
-                 placeholder="••••••••" autocomplete="current-password" required>
+                 placeholder="••••••••" required autocomplete="current-password">
           <span class="form-input-wrap__toggle" onclick="togglePwd()">
             <svg id="eye-icon" width="15" height="15" viewBox="0 0 24 24"
                  fill="none" stroke="currentColor" stroke-width="2">
@@ -58,34 +67,17 @@ $errore = $errori[$_GET['err'] ?? ''] ?? '';
         </div>
       </div>
 
-      <?php if ($errore): ?>
-      <div class="form-error visible">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="12" y1="8" x2="12" y2="12"/>
-          <line x1="12" y1="16" x2="12.01" y2="16"/>
-        </svg>
-        <span><?= e($errore) ?></span>
-      </div>
-      <?php endif; ?>
-
       <button type="submit" class="btn-login">Accedi</button>
+
     </form>
 
+    <!-- Account demo -->
     <div class="login-divider" style="margin-top:20px">account demo</div>
     <div class="demo-accounts">
       <div class="demo-account" onclick="fillDemo('marco.rossi@example.com','password')">
         <div class="demo-account__avatar" style="background:linear-gradient(135deg,#00d4b4,#0088aa)">MR</div>
         <div class="demo-account__info">
           <div class="demo-account__name">Marco Rossi</div>
-          <div class="demo-account__role">Proprietario · password</div>
-        </div>
-        <span class="demo-account__arrow">›</span>
-      </div>
-      <div class="demo-account" onclick="fillDemo('laura.bianchi@example.com','password')">
-        <div class="demo-account__avatar" style="background:linear-gradient(135deg,#f0a030,#f04060)">LB</div>
-        <div class="demo-account__info">
-          <div class="demo-account__name">Laura Bianchi</div>
           <div class="demo-account__role">Proprietario · password</div>
         </div>
         <span class="demo-account__arrow">›</span>
@@ -101,14 +93,14 @@ $errore = $errori[$_GET['err'] ?? ''] ?? '';
     </div>
 
   </div>
-  <p class="login-note">SmartHome © 2026 · <span>Dati reali da DB</span></p>
+  <p class="login-note">SmartHome © 2026 · <span>Demo</span></p>
 </div>
 
 <script>
 function togglePwd() {
-    const i = document.getElementById('password');
+    const i  = document.getElementById('password');
     const ic = document.getElementById('eye-icon');
-    i.type = i.type === 'password' ? 'text' : 'password';
+    i.type   = i.type === 'password' ? 'text' : 'password';
     ic.innerHTML = i.type === 'text'
         ? '<path d="M17.94 17.94A10 10 0 0112 20C5 20 1 12 1 12a18 18 0 015.06-5.94M9.9 4.24A9 9 0 0112 4c7 0 11 8 11 8a18 18 0 01-2.16 3.19M1 1l22 22"/>'
         : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
