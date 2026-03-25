@@ -100,7 +100,7 @@ function iniziali(string $nome, string $cognome): string {
       <span class="nav__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>
       <span class="nav__label">Panoramica</span>
     </a>
-    <a href="../home/index.php" class="nav__item" title="Stanze">
+    <a href="../home/index.php?page=stanze" class="nav__item" title="Stanze">
       <span class="nav__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
       <span class="nav__label">Stanze</span>
     </a>
@@ -114,21 +114,65 @@ function iniziali(string $nome, string $cognome): string {
     <?php endif; ?>
 
     <div class="nav__section-label">Dispositivi</div>
-    <a href="index.php" class="nav__item active" title="Dispositivi">
+    <a href="../dispositivi/index.php" class="nav__item active" title="Tutti i dispositivi">
       <span class="nav__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
       <span class="nav__label">Dispositivi</span>
     </a>
     <?php if ($isOwner): ?>
-    <a href="crea.php" class="nav__item" title="Crea dispositivo">
+    <a href="../dispositivi/crea.php" class="nav__item" title="Crea dispositivo">
       <span class="nav__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span>
       <span class="nav__label">Crea dispositivo</span>
     </a>
     <?php endif; ?>
   </nav>
 
+ <?php if ($isOwner): ?>
+    <a href="../utenti/index.php" class="nav__item" title="Utenti">
+      <span class="nav__icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+          <path d="M16 3.13a4 4 0 010 7.75"/>
+        </svg>
+      </span>
+      <span class="nav__label">Utenti</span>
+    </a>
+    <a href="../utenti/crea.php" class="nav__item" title="Crea utente">
+      <span class="nav__icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="16"/>
+          <line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+      </span>
+      <span class="nav__label">Crea utente</span>
+    </a>
+    <?php endif; ?>
+
+    <div class="nav__section-label">Alert</div>
+
+    <a href="../home/index.php?page=notifiche" class="nav__item" title="Notifiche">
+      <span class="nav__icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 01-3.46 0"/>
+        </svg>
+      </span>
+      <span class="nav__label">Notifiche</span>
+    </a>
+
+  </nav>
+
   <div class="sidebar__footer">
-    <a href="../lib/logout.php" class="nav__item nav__item--danger">
-      <span class="nav__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
+    <a href="../lib/logout.php" class="nav__item nav__item--danger" title="Esci">
+      <span class="nav__icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </span>
       <span class="nav__label">Esci</span>
     </a>
     <div class="sidebar__user">
@@ -141,6 +185,7 @@ function iniziali(string $nome, string $cognome): string {
       </div>
     </div>
   </div>
+
 </aside>
 
 <!-- MAIN -->
