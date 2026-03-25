@@ -37,7 +37,7 @@ $errore = $errori[$_GET['err'] ?? ''] ?? '';
       </div>
     </div>
 
-    <form class="login-form" method="POST" action="auth/login.php">
+    <form class="login-form" method="POST" action="login">
       <div class="form-group">
         <label class="form-label" for="email">Email</label>
         <input class="form-input" type="email" id="email" name="email"
