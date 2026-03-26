@@ -82,14 +82,7 @@ $errore = $errori[$_GET['err'] ?? ''] ?? '';
         </div>
         <span class="demo-account__arrow">›</span>
       </div>
-      <div class="demo-account" onclick="fillDemo('laura.bianchi@example.com','password')">
-        <div class="demo-account__avatar" style="background:linear-gradient(135deg,#f0a030,#f04060)">LB</div>
-        <div class="demo-account__info">
-          <div class="demo-account__name">Laura Bianchi</div>
-          <div class="demo-account__role">Proprietario · password</div>
-        </div>
-        <span class="demo-account__arrow">›</span>
-      </div>
+    
       <div class="demo-account" onclick="fillDemo('giulia.verdi@example.com','password')">
         <div class="demo-account__avatar" style="background:linear-gradient(135deg,#4a5878,#1a2130)">GV</div>
         <div class="demo-account__info">
