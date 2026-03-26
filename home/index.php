@@ -163,7 +163,6 @@ function iniziali(string $nome, string $cognome): string {
       </svg>
     </div>
     <span class="sidebar__brand">Smart<span>Home</span></span>
- 
   </div>
 
   <nav class="sidebar__nav">
@@ -180,7 +179,7 @@ function iniziali(string $nome, string $cognome): string {
       <span class="nav__label">Panoramica</span>
     </div>
 
-    <div class="nav__item" data-page="stanze" title="Stanze">
+    <a href="../stanze/index.php" class="nav__item" title="Stanze">
       <span class="nav__icon">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
@@ -188,7 +187,7 @@ function iniziali(string $nome, string $cognome): string {
         </svg>
       </span>
       <span class="nav__label">Stanze</span>
-    </div>
+    </a>
 
     <div class="nav__section-label">Stanze</div>
 
@@ -320,7 +319,7 @@ function iniziali(string $nome, string $cognome): string {
       </div>
       <?php endif; ?>
 
-      <div class="notif-bell" onclick="navigate('notifiche')">
+      <div class="notif-bell" onclick="navigate('notifiche')" style="cursor:pointer">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
           <path d="M13.73 21a2 2 0 01-3.46 0"/>
@@ -400,7 +399,7 @@ function iniziali(string $nome, string $cognome): string {
       <div style="display:flex;flex-direction:column;gap:var(--sp-4)">
         <div class="section-header">
           <span class="section-title">Stanze</span>
-          <button class="btn btn--sm btn--ghost" onclick="navigate('stanze')">Vedi tutte →</button>
+          <a href="../stanze/index.php" class="btn btn--sm btn--ghost">Vedi tutte →</a>
         </div>
 
         <div class="grid-2">
@@ -555,93 +554,6 @@ function iniziali(string $nome, string $cognome): string {
   </section>
 
   <!-- ══════════════════════════════════════
-       PAGE: STANZE (dettaglio completo)
-  ══════════════════════════════════════ -->
-  <section class="page" id="page-stanze">
-    <div class="section-header">
-      <span class="section-title">Tutte le Stanze</span>
-    </div>
-
-    <!-- Alert soglie superate -->
-    <?php foreach ($stanze as $s): ?>
-    <?php foreach ($s['dispositivi'] as $d): ?>
-    <?php if (fuoriSoglia($d['valore'], $d['soglia_minima'], $d['soglia_massima'])): ?>
-    <div class="alert-banner alert-banner--warn" style="font-size:12px">
-      <span>
-        <?= sensorIcon($d['unita_misura'] ?? '') ?>
-        <strong><?= htmlspecialchars($d['nome']) ?></strong>
-        in <strong><?= htmlspecialchars($s['nome']) ?></strong>:
-        valore <?= htmlspecialchars($d['valore']) ?><?= htmlspecialchars($d['unita_misura'] ?? '') ?>
-        (soglia: <?= $d['soglia_minima'] ?? '—' ?> – <?= $d['soglia_massima'] ?? '—' ?>)
-      </span>
-    </div>
-    <?php endif; ?>
-    <?php endforeach; ?>
-    <?php endforeach; ?>
-
-    <div class="grid-2">
-      <?php foreach ($stanze as $s):
-        $fireClass = $s['status'] === 'fire' ? 'room-card--fire' : '';
-        $warnStyle = $s['status'] === 'warn' ? 'style="border-color:rgba(240,160,48,0.35)"' : '';
-      ?>
-      <div class="card room-card <?= $fireClass ?>" <?= $warnStyle ?>>
-        <div class="room-card__header">
-          <div class="room-card__name">🏠 <?= htmlspecialchars($s['nome']) ?></div>
-          <?= badgeStatus($s['status']) ?>
-        </div>
-
-        <!-- Tutti i sensori con dettaglio soglie -->
-        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
-          <?php foreach ($s['dispositivi'] as $d):
-            if ($d['tipo'] !== 'Sensore') continue;
-            $fuori = fuoriSoglia($d['valore'], $d['soglia_minima'], $d['soglia_massima']);
-            $col   = $fuori ? ($s['status']==='fire'?'var(--danger)':'var(--warn)') : 'var(--brand)';
-          ?>
-          <div style="display:flex;align-items:center;justify-content:space-between;
-                      padding:8px 10px;background:var(--bg-elevated);border-radius:8px;
-                      <?= $fuori ? 'border:1px solid '.($s['status']==='fire'?'rgba(240,64,96,0.3)':'rgba(240,160,48,0.3)') : '' ?>">
-            <span style="font-size:12px">
-              <?= sensorIcon($d['unita_misura'] ?? '') ?>
-              <?= htmlspecialchars($d['nome']) ?>
-            </span>
-            <div style="text-align:right">
-              <div style="font-family:var(--font-mono);font-size:14px;font-weight:600;color:<?= $col ?>">
-                <?= $d['valore'] !== null ? htmlspecialchars($d['valore']) . htmlspecialchars($d['unita_misura'] ?? '') : '—' ?>
-              </div>
-              <?php if ($d['soglia_minima'] !== null || $d['soglia_massima'] !== null): ?>
-              <div style="font-size:10px;color:var(--text-muted);font-family:var(--font-mono)">
-                soglia: <?= $d['soglia_minima'] ?? '—' ?> – <?= $d['soglia_massima'] ?? '—' ?>
-              </div>
-              <?php endif; ?>
-            </div>
-          </div>
-          <?php endforeach; ?>
-        </div>
-
-        <!-- Attuatori -->
-        <?php $attuatori = array_filter($s['dispositivi'], fn($d) => $d['tipo'] === 'Attuatore'); ?>
-        <?php if ($attuatori): ?>
-        <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px">Attuatori:</div>
-        <div style="display:flex;flex-wrap:wrap;gap:6px">
-          <?php foreach ($attuatori as $a): ?>
-          <span class="badge badge--muted">💡 <?= htmlspecialchars($a['nome']) ?></span>
-          <?php endforeach; ?>
-        </div>
-        <?php endif; ?>
-
-        <div style="margin-top:10px;font-size:11px;color:var(--text-muted);font-family:var(--font-mono)">
-          <?= $s['volumetria'] ?> m³ ·
-          <a href="../dispositivi/index.php?stanza=<?= $s['id_stanza'] ?>"
-             style="color:var(--brand);text-decoration:none">
-            Vedi dispositivi →
-          </a>
-        </div>
-      </div>
-      <?php endforeach; ?>
-    </div>
-  </section>
-
-  <!-- ══════════════════════════════════════
        PAGE: NOTIFICHE
   ══════════════════════════════════════ -->
   <section class="page" id="page-notifiche">
@@ -784,7 +696,6 @@ function iniziali(string $nome, string $cognome): string {
 // ── Navigazione SPA ──────────────────────────────────────────
 const PAGE_META = {
     overview:   ['Panoramica',  'Home · Tutti i sensori'],
-    stanze:     ['Stanze',      'Dettaglio per stanza'],
     notifiche:  ['Notifiche',   'Alert e messaggi'],
 };
 
@@ -803,10 +714,13 @@ function navigate(pageId) {
 }
 
 // Sidebar toggle
-document.getElementById('sidebar-toggle').addEventListener('click', function() {
-    document.getElementById('sidebar').classList.toggle('collapsed');
-    document.getElementById('main-area').classList.toggle('expanded');
-});
+const sidebarToggle = document.getElementById('sidebar-toggle');
+if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', function() {
+        document.getElementById('sidebar').classList.toggle('collapsed');
+        document.getElementById('main-area').classList.toggle('expanded');
+    });
+}
 
 // Nav click
 document.querySelectorAll('.nav__item[data-page]').forEach(function(item) {
