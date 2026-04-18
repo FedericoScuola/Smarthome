@@ -145,6 +145,24 @@ $paginaAttiva = 'stanze';
             Vedi dispositivi →
           </a>
         </div>
+
+        <!-- Azioni (solo Proprietario) -->
+        <?php if ($isOwner): ?>
+        <div style="display:flex;gap:var(--sp-2);margin-top:var(--sp-3);border-top:1px solid var(--border-subtle);padding-top:var(--sp-3)">
+          <a href="modifica.php?id=<?= $s['id_stanza'] ?>"
+             class="btn btn--sm btn--ghost"
+             style="flex:1;text-align:center;font-size:11px">
+            ✏ Modifica
+          </a>
+          <button onclick="apriEliminaStanza(<?= $s['id_stanza'] ?>, '<?= htmlspecialchars(addslashes($s['nome']), ENT_QUOTES) ?>', <?= (int)count($s['dispositivi']) ?>)"
+                  class="btn btn--sm"
+                  style="flex:1;font-size:11px;background:transparent;
+                         border:1px solid rgba(240,64,96,0.4);color:var(--danger)">
+            🗑 Elimina
+          </button>
+        </div>
+        <?php endif; ?>
+
       </div>
       <?php endforeach; ?>
     </div>
@@ -182,12 +200,57 @@ $paginaAttiva = 'stanze';
 </div>
 <?php endif; ?>
 
+<!-- ── Modal elimina stanza ─────────────────────────────────── -->
+<div class="modal-overlay" id="modal-elim-stanza">
+  <div class="modal modal--danger">
+    <span class="modal__icon">🗑</span>
+    <h2 class="modal__title" style="color:var(--danger)">Conferma eliminazione</h2>
+    <p class="modal__desc" style="text-align:center;line-height:1.6">
+      Stai per eliminare la stanza<br>
+      <strong id="modal-stanza-nome" style="color:var(--text-primary)"></strong><br>
+      con tutti i suoi dispositivi e misurazioni associate.<br>
+      <span style="font-size:11px;color:var(--text-muted)">Operazione irreversibile.</span>
+    </p>
+    <div class="modal__actions">
+      <form method="POST" id="form-elim-stanza">
+        <input type="hidden" name="azione" value="elimina">
+        <input type="hidden" name="id_stanza" id="modal-stanza-id" value="">
+        <button type="submit" class="btn btn--danger">Sì, elimina definitivamente</button>
+      </form>
+      <button class="btn btn--ghost" onclick="chiudiEliminaStanza()">Annulla</button>
+    </div>
+  </div>
+</div>
+
+<?php if (isset($_SESSION['flash'])): ?>
+<div id="flash-stanza" class="alert-banner alert-banner--info"
+     style="position:fixed;bottom:24px;right:24px;max-width:380px;z-index:9998">
+  <span>✅</span>
+  <span><?= htmlspecialchars($_SESSION['flash']) ?></span>
+</div>
+<?php unset($_SESSION['flash']); endif; ?>
+
 <script>
 <?php if ($hasFire): ?>
 setTimeout(function() {
     document.getElementById('fire-modal').classList.add('open');
 }, 700);
 <?php endif; ?>
+
+function apriEliminaStanza(id, nome, numDisp) {
+  document.getElementById('modal-stanza-nome').textContent = nome;
+  document.getElementById('form-elim-stanza').action = 'modifica.php?id=' + id;
+  document.getElementById('modal-stanza-id').value = id;
+  document.getElementById('modal-elim-stanza').classList.add('open');
+}
+function chiudiEliminaStanza() {
+  document.getElementById('modal-elim-stanza').classList.remove('open');
+}
+document.getElementById('modal-elim-stanza').addEventListener('click', function(e) {
+  if (e.target === this) chiudiEliminaStanza();
+});
+const flash = document.getElementById('flash-stanza');
+if (flash) setTimeout(() => flash.style.display = 'none', 5000);
 </script>
 </body>
 </html>
