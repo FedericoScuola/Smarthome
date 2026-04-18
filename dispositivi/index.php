@@ -187,6 +187,23 @@ $paginaAttiva = 'dispositivi';
         </a>
         <?php endif; ?>
 
+        <!-- Azioni: Modifica ed Elimina (solo Proprietario) -->
+        <?php if ($isOwner): ?>
+        <div style="display:flex;gap:var(--sp-2);margin-top:var(--sp-2)">
+          <a href="modifica.php?id=<?= $d['id_dispositivo'] ?>"
+             class="btn btn--sm btn--ghost"
+             style="flex:1;text-align:center;font-size:11px">
+            ✏ Modifica
+          </a>
+          <button onclick="apriElimina(<?= $d['id_dispositivo'] ?>, '<?= htmlspecialchars(addslashes($d['nome']), ENT_QUOTES) ?>')"
+                  class="btn btn--sm"
+                  style="flex:1;font-size:11px;background:transparent;
+                         border:1px solid rgba(240,64,96,0.4);color:var(--danger)">
+            🗑 Elimina
+          </button>
+        </div>
+        <?php endif; ?>
+
       </div>
       <?php endforeach; ?>
     </div>
@@ -208,5 +225,55 @@ $paginaAttiva = 'dispositivi';
   </div>
 </main>
 </div>
+
+<!-- ── Modal elimina rapida (da lista dispositivi) ─────────── -->
+<div class="modal-overlay" id="modal-elimina">
+  <div class="modal modal--danger">
+    <span class="modal__icon">🗑</span>
+    <h2 class="modal__title" style="color:var(--danger)">Conferma eliminazione</h2>
+    <p class="modal__desc" style="text-align:center;line-height:1.6">
+      Stai per eliminare il dispositivo<br>
+      <strong id="modal-disp-nome" style="color:var(--text-primary)"></strong><br>
+      <span style="font-size:11px;color:var(--text-muted)">
+        Tutte le misurazioni associate verranno eliminate. Operazione irreversibile.
+      </span>
+    </p>
+    <div class="modal__actions">
+      <form method="POST" action="modifica.php" id="form-elimina">
+        <input type="hidden" name="azione" value="elimina">
+        <input type="hidden" name="id_dispositivo" id="modal-disp-id" value="">
+        <button type="submit" class="btn btn--danger">Sì, elimina definitivamente</button>
+      </form>
+      <button class="btn btn--ghost" onclick="chiudiElimina()">Annulla</button>
+    </div>
+  </div>
+</div>
+
+<?php if (isset($_SESSION['flash'])): ?>
+<div id="flash-msg" class="alert-banner alert-banner--info"
+     style="position:fixed;bottom:24px;right:24px;max-width:380px;z-index:9998;
+            animation:fadeInUp 0.3s ease">
+  <span>✅</span>
+  <span><?= htmlspecialchars($_SESSION['flash']) ?></span>
+</div>
+<?php unset($_SESSION['flash']); endif; ?>
+
+<script>
+function apriElimina(id, nome) {
+  document.getElementById('modal-disp-nome').textContent = nome;
+  document.getElementById('modal-disp-id').value = id;
+  document.getElementById('form-elimina').action = 'modifica.php?id=' + id;
+  document.getElementById('modal-elimina').classList.add('open');
+}
+function chiudiElimina() {
+  document.getElementById('modal-elimina').classList.remove('open');
+}
+document.getElementById('modal-elimina').addEventListener('click', function(e) {
+  if (e.target === this) chiudiElimina();
+});
+// Auto-hide flash
+const flash = document.getElementById('flash-msg');
+if (flash) setTimeout(() => flash.style.display = 'none', 5000);
+</script>
 </body>
 </html>
