@@ -51,6 +51,18 @@ function classeAttiva($voce, $paginaAttiva) {
       <span class="nav__label">Panoramica</span>
     </a>
 
+    <a href="../piantina/index.php" class="<?= classeAttiva('piantina', $paginaAttiva) ?>" title="Piantina">
+      <span class="nav__icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="9" rx="1"/>
+          <rect x="14" y="3" width="7" height="5" rx="1"/>
+          <rect x="14" y="12" width="7" height="9" rx="1"/>
+          <rect x="3" y="16" width="7" height="5" rx="1"/>
+        </svg>
+      </span>
+      <span class="nav__label">Piantina</span>
+    </a>
+
     <a href="../stanze/index.php" class="<?= classeAttiva('stanze', $paginaAttiva) ?>" title="Stanze">
       <span class="nav__icon">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
