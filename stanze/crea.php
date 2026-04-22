@@ -12,8 +12,8 @@ if ($_SESSION['ruolo'] !== 'Proprietario') {
 
 // ── Include librerie condivise ────────────────────────────────
 require_once '../lib/conn.php';
-require_once '../lib/helpers.php';
-
+require_once '../lib/helpers.php';require_once '../lib/telegram_notifiche.php';
+require_once '../lib/email_notifiche.php';
 $errore  = '';
 $success = '';
 

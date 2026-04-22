@@ -1,8 +1,9 @@
 <?php
 $servername = "127.0.0.1";
 $username   = "root";
-$password   = "mysql";
+$password   = "";
 $dbname     = "smarthome";
+
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8mb4", $username, $password);
@@ -12,3 +13,4 @@ try {
     die("Connessione fallita: " . $e->getMessage());
 }
 ?>
+

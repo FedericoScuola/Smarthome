@@ -12,8 +12,8 @@ if ($_SESSION['ruolo'] !== 'Proprietario') {
 
 // ── Include librerie condivise ────────────────────────────────
 require_once '../lib/conn.php';
-require_once '../lib/helpers.php';
-
+require_once '../lib/helpers.php';require_once '../lib/telegram_notifiche.php';
+require_once '../lib/email_notifiche.php';
 $errore  = '';
 $success = '';
 
@@ -64,6 +64,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'ruolo'    => $nuovo_ruolo,
             // Se il campo telegram è vuoto, salva null nel database
             'telegram' => $nuovo_telegram !== '' ? $nuovo_telegram : null,
+        ]);
+        
+        $id_nuovo_utente = $conn->lastInsertId();
+        
+        // ── Invia notifiche di nuovo utente registrato ──────────────
+        telegram_nuovo_utente_full($nuovo_nome, $nuovo_cognome, $nuovo_ruolo, $nuovo_email);
+        email_nuovo_utente($nuovo_nome, $nuovo_cognome, $nuovo_ruolo, $nuovo_email);
+        
+        // ── Crea evento di nuovo utente nel database ───────────────
+      $stmtEvento = $conn->prepare(
+    "INSERT INTO eventi (id_tipo, id_dispositivo, id_utente, timestamp, dettagli)
+     VALUES (6, 1, :id_ut, NOW(), :dettagli)"
+);
+$stmtEvento->execute([
+    'id_ut'    => $id_nuovo_utente,
+    'dettagli' => "Nuovo utente registrato: $nuovo_nome $nuovo_cognome ($nuovo_ruolo)",
+]);
+        $id_evento = $conn->lastInsertId();
+        
+        // ── Crea notifiche nel database ─────────────────────────────
+        $stmtNotif = $conn->prepare(
+            "INSERT INTO notifiche (id_evento, id_utente, testo, tipo_notifica, timestamp_invio)
+             VALUES (:id_ev, :id_ut, :testo, :tipo, NOW())"
+        );
+        
+        $stmtNotif->execute([
+            'id_ev' => $id_evento,
+            'id_ut' => $id_nuovo_utente,
+            'testo' => "Nuovo utente registrato: $nuovo_nome $nuovo_cognome ($nuovo_ruolo)",
+            'tipo' => 'Telegram'
+        ]);
+        
+        $stmtNotif->execute([
+            'id_ev' => $id_evento,
+            'id_ut' => $id_nuovo_utente,
+            'testo' => "Nuovo utente registrato: $nuovo_nome $nuovo_cognome ($nuovo_ruolo)",
+            'tipo' => 'Email'
         ]);
 
         $success = 'Utente <strong>' . htmlspecialchars("$nuovo_nome $nuovo_cognome") . '</strong>'

@@ -61,6 +61,34 @@ function classeAttiva($voce, $paginaAttiva) {
       <span class="nav__label">Stanze</span>
     </a>
 
+    <!-- ── AGGIUNTA: Icona notifiche ── -->
+    <?php
+      // Conta le notifiche delle ultime 24 ore per il badge rosso
+      $stmtBadgeNotif = $conn->query(
+          "SELECT COUNT(*) FROM notifiche WHERE timestamp_invio >= NOW() - INTERVAL 24 HOUR"
+      );
+      $contatoreNotifiche = (int)$stmtBadgeNotif->fetchColumn();
+    ?>
+    <a href="../notifiche/index.php" class="<?= classeAttiva('notifiche', $paginaAttiva) ?>" title="Notifiche">
+      <span class="nav__icon">
+        <!-- Icona campanella -->
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+      </span>
+      <span class="nav__label">
+        Notifiche
+        <?php if ($contatoreNotifiche > 0): ?>
+          <!-- Badge rosso con il numero di notifiche ultime 24h -->
+          <span style="background:#ef4444;color:#fff;border-radius:10px;padding:1px 6px;font-size:10px;margin-left:4px;font-weight:600;">
+            <?= $contatoreNotifiche ?>
+          </span>
+        <?php endif; ?>
+      </span>
+    </a>
+    <!-- ── FINE AGGIUNTA ── -->
+
     <!-- Sezione Stanze (solo Proprietario) -->
     <?php if ($isOwner): ?>
     <div class="nav__section-label">Stanze</div>

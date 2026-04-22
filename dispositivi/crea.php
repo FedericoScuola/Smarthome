@@ -12,8 +12,8 @@ if ($_SESSION['ruolo'] !== 'Proprietario') {
 
 // ── Include librerie condivise ────────────────────────────────
 require_once '../lib/conn.php';
-require_once '../lib/helpers.php';
-
+require_once '../lib/helpers.php';require_once '../lib/telegram_notifiche.php';
+require_once '../lib/email_notifiche.php';
 $errore  = '';
 $success = '';
 
@@ -59,7 +59,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'min'       => ($tipo === 'Sensore' && $soglia_min !== '') ? (float)$soglia_min : null,
             'max'       => ($tipo === 'Sensore' && $soglia_max !== '') ? (float)$soglia_max : null,
         ]);
-        $success = 'Dispositivo <strong>' . htmlspecialchars($nome_disp) . '</strong> creato con successo!';
+        
+        // ── Recupera il nome della stanza ────────────────────────────
+        $stmtStanza = $conn->prepare("SELECT nome FROM stanze WHERE id_stanza = :id");
+        $stmtStanza->execute(['id' => $id_stanza]);
+        $stanzaRow = $stmtStanza->fetch();
+        $stanza_nome = $stanzaRow ? $stanzaRow['nome'] : 'Sconosciuta';
+        
+        // ── Invia notifiche di nuovo dispositivo ─────────────────────
+        telegram_nuovo_dispositivo($nome_disp, $stanza_nome);
+        email_nuovo_dispositivo($nome_disp, $stanza_nome);
+        
+        // ── Crea evento di nuovo dispositivo nel database ────────────
+      $id_nuovo_dispositivo = (int)$conn->lastInsertId();
+
+$id_nuovo_dispositivo = (int)$id_nuovo_dispositivo;
+
+if ($id_nuovo_dispositivo > 0) {
+    $stmtEvento = $conn->prepare(
+        "INSERT INTO eventi (id_tipo, id_dispositivo, id_utente, timestamp, dettagli)
+         VALUES (6, :id_disp, :id_ut, NOW(), :dettagli)"
+    );
+
+    $stmtEvento->execute([
+        'id_disp'  => $id_nuovo_dispositivo,
+        'id_ut'    => (int)$_SESSION['utente'],
+        'dettagli' => "Nuovo dispositivo creato: $nome_disp in $stanza_nome",
+    ]);
+}
+        $id_evento = $conn->lastInsertId();
+        
+        // ── Crea notifiche nel database ─────────────────────────────
+   $id_utente = (int)$_SESSION['utente'];
+
+if (!empty($id_evento) && $id_evento > 0) {
+
+    $stmtNotif = $conn->prepare(
+        "INSERT INTO notifiche (id_evento, id_utente, testo, tipo_notifica, timestamp_invio)
+         VALUES (:id_ev, :id_ut, :testo, :tipo, NOW())"
+    );
+
+    // Telegram
+    $stmtNotif->execute([
+        'id_ev' => $id_evento,
+        'id_ut' => $id_utente,
+        'testo' => "Nuovo dispositivo aggiunto: $nome_disp in $stanza_nome",
+        'tipo' => 'Telegram'
+    ]);
+
+    // Email
+    $stmtNotif->execute([
+        'id_ev' => $id_evento,
+        'id_ut' => $id_utente,
+        'testo' => "Nuovo dispositivo aggiunto: $nome_disp in $stanza_nome",
+        'tipo' => 'Email'
+    ]);
+}
     }
 }
 

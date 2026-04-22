@@ -47,8 +47,8 @@ function telegram_send(string $testo, bool $markdown = true): bool {
     ]);
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    
     curl_close($ch);
-    echo "<pre>HTTP: $httpCode\nRisposta: $response</pre>"; 
 
     if ($response === false || $httpCode !== 200) {
         error_log("[Telegram] Invio fallito. HTTP $httpCode - $response");
@@ -213,4 +213,87 @@ function telegram_batteria_scarica(string $nome, string $stanza, int $percentual
 // ─────────────────────────────────────────────────────────────
 function telegram_messaggio(string $testo): bool {
     return telegram_send($testo, false);
+}
+
+// ─────────────────────────────────────────────────────────────
+//  EVENTO 6: Login utente
+//  Da chiamare in login/auth.php quando un utente effettua il login
+// ─────────────────────────────────────────────────────────────
+function telegram_login(string $nome, string $cognome, string $email): bool {
+    $n   = tg_esc($nome . ' ' . $cognome);
+    $e   = tg_esc($email);
+    $ora = tg_esc(date('d/m/Y H:i:s'));
+
+    $msg = "✅ *ACCESSO AL SISTEMA*\n\n"
+         . "👤 Utente: *{$n}*\n"
+         . "📧 Email: *{$e}*\n"
+         . "🕐 {$ora}";
+
+    return telegram_send($msg);
+}
+
+// ─────────────────────────────────────────────────────────────
+//  EVENTO 7: Logout utente
+//  Da chiamare in lib/logout.php quando un utente effettua il logout
+// ─────────────────────────────────────────────────────────────
+function telegram_logout(string $nome, string $cognome): bool {
+    $n   = tg_esc($nome . ' ' . $cognome);
+    $ora = tg_esc(date('d/m/Y H:i:s'));
+
+    $msg = "🚪 *USCITA DAL SISTEMA*\n\n"
+         . "👤 Utente: *{$n}*\n"
+         . "🕐 {$ora}";
+
+    return telegram_send($msg);
+}
+
+// ─────────────────────────────────────────────────────────────
+//  EVENTO 8: Nuovo utente registrato (versione estesa)
+//  Da chiamare in utenti/crea.php dopo l'INSERT di un nuovo utente
+// ─────────────────────────────────────────────────────────────
+function telegram_nuovo_utente_full(string $nome, string $cognome, string $ruolo, string $email): bool {
+    $n   = tg_esc($nome . ' ' . $cognome);
+    $r   = tg_esc($ruolo);
+    $e   = tg_esc($email);
+    $ora = tg_esc(date('d/m/Y H:i:s'));
+
+    $msg = "👤 *NUOVO UTENTE REGISTRATO*\n\n"
+         . "🙍 Nome: *{$n}*\n"
+         . "🔑 Ruolo: *{$r}*\n"
+         . "📧 Email: *{$e}*\n"
+         . "🕐 {$ora}";
+
+    return telegram_send($msg);
+}
+
+// ─────────────────────────────────────────────────────────────
+//  EVENTO 9: Nuovo dispositivo aggiunto
+//  Da chiamare in dispositivi/crea.php dopo l'INSERT di un nuovo dispositivo
+// ─────────────────────────────────────────────────────────────
+function telegram_nuovo_dispositivo(string $nome, string $stanza): bool {
+    $n   = tg_esc($nome);
+    $s   = tg_esc($stanza);
+    $ora = tg_esc(date('d/m/Y H:i:s'));
+
+    $msg = "📡 *NUOVO DISPOSITIVO AGGIUNTO*\n\n"
+         . "🏠 Stanza: *{$s}*\n"
+         . "📱 Dispositivo: *{$n}*\n"
+         . "🕐 {$ora}";
+
+    return telegram_send($msg);
+}
+
+// ─────────────────────────────────────────────────────────────
+//  EVENTO 10: Nuova stanza aggiunta
+//  Da chiamare in stanze/crea.php dopo l'INSERT di una nuova stanza
+// ─────────────────────────────────────────────────────────────
+function telegram_nuova_stanza(string $nome): bool {
+    $n   = tg_esc($nome);
+    $ora = tg_esc(date('d/m/Y H:i:s'));
+
+    $msg = "🏠 *NUOVA STANZA AGGIUNTA*\n\n"
+         . "📍 Stanza: *{$n}*\n"
+         . "🕐 {$ora}";
+
+    return telegram_send($msg);
 }
