@@ -172,8 +172,12 @@ function classeAttiva($voce, $paginaAttiva) {
     </a>
 
     <div class="sidebar__user">
-      <?php if (!empty($_SESSION['avatar'])): ?>
-        <img src="<?= htmlspecialchars($_SESSION['avatar']) ?>" class="avatar" style="object-fit:cover" alt="avatar">
+      <?php if ($nome === 'Marco' && $cognome === 'Rossi'): ?>
+        <img src="/Smarthome/foto/marco_rossi.avif" class="avatar" style="object-fit:cover" alt="avatar">
+      <?php elseif ($nome === 'Laura' && $cognome === 'Bianchi'): ?>
+        <img src="/Smarthome/foto/laura_bianchi.webp" class="avatar" style="object-fit:cover" alt="avatar">
+      <?php elseif ($nome === 'Giulia' && $cognome === 'Verdi'): ?>
+        <img src="/Smarthome/foto/giulia_verdi.avif" class="avatar" style="object-fit:cover" alt="avatar">
       <?php else: ?>
         <div class="avatar" style="background:linear-gradient(135deg,#00d4b4,#0088aa)">
           <?= iniziali($nome, $cognome) ?>
